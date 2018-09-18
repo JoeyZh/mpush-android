@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.support.annotation.MainThread;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
@@ -21,6 +22,7 @@ import com.mpush.client.ClientConfig;
 import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
 
 public class MPushApiHelper {
 
@@ -31,8 +33,9 @@ public class MPushApiHelper {
     // 分发服务器地址
     private String allocServer;
 
-
     private Context context;
+
+    private Handler mainHandler;
 
     public synchronized static MPushApiHelper getInstance() {
         if (apiHelper != null) {
@@ -53,10 +56,9 @@ public class MPushApiHelper {
         return getInstance();
     }
 
-    private MPushApiHelper registerIcon(int smallIcon, int largeIcon) {
+    private void registerIcon(int smallIcon, int largeIcon) {
         Notifications.I.setSmallIcon(smallIcon);
         Notifications.I.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), largeIcon));
-        return getInstance();
     }
 
     private MPushApiHelper initPush(String allocServer, String userId) {
@@ -72,7 +74,6 @@ public class MPushApiHelper {
         MPush.I.checkInit(context).setClientConfig(cc);
         return getInstance();
     }
-
 
     public MPushApiHelper bindUser(String userId) {
         if (!TextUtils.isEmpty(userId)) {

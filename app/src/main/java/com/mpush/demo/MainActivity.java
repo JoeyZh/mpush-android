@@ -1,10 +1,13 @@
 package com.mpush.demo;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -65,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
                 .setEnableHttpProxy(true)
                 .setUserId(userId);
         MPush.I.checkInit(getApplicationContext()).setClientConfig(cc);
+
+
     }
 
     private String getDeviceId() {

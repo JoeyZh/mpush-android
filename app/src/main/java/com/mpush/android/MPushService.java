@@ -130,7 +130,6 @@ public final class MPushService extends Service implements ClientListener {
 
     @Override
     public void onKickUser(String deviceId, String userId) {
-        MPush.I.unbindAccount();
         sendBroadcast(new Intent(ACTION_KICK_USER)
                 .addCategory(BuildConfig.APPLICATION_ID)
                 .putExtra(EXTRA_DEVICE_ID, deviceId)

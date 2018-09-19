@@ -209,6 +209,7 @@ public final class MPush {
             sp.edit().putString(SP_KEY_AT, userId).apply();
             sp.edit().putString(SP_KEY_TG, tags).apply();
             if (hasStarted() && client.isRunning()) {
+                client.unbindUser();
                 client.bindUser(userId, tags);
             } else if (clientConfig != null) {
                 clientConfig.setUserId(userId);

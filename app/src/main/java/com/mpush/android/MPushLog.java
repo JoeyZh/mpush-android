@@ -58,4 +58,5 @@ public final class MPushLog implements Logger {
     public void e(Throwable e, String s, Object... args) {
         if (enable) Log.e(sTag, String.format(s, args), e);
     }
+
 }

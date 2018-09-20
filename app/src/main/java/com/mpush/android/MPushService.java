@@ -135,6 +135,7 @@ public final class MPushService extends Service implements ClientListener {
                 .putExtra(EXTRA_DEVICE_ID, deviceId)
                 .putExtra(EXTRA_USER_ID, userId)
         );
+        MPush.I.unbindAccount();
     }
 
     @Override

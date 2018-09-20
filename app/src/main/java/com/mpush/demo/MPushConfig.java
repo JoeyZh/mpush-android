@@ -9,7 +9,7 @@ import com.mpush.android.R;
 public class MPushConfig {
 
     // 推送服务器Ip地址
-    protected static final String ALLOC_SERVER = "192.168.1.112";
+    protected static final String ALLOC_SERVER = "http://192.168.1.112:9999";
     // APP的推送smallIcon
     protected static final int NOTICE_ICON_SMALL = R.mipmap.ic_notification;
     // APP的推送largeIcon

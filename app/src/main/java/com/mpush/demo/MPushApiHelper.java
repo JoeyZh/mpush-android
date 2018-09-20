@@ -27,15 +27,12 @@ import java.util.logging.Handler;
 public class MPushApiHelper {
 
     private static MPushApiHelper apiHelper;
-    private SharedPreferences sp;
     // 应用注册Id
     private String userId;
     // 分发服务器地址
     private String allocServer;
 
     private Context context;
-
-    private Handler mainHandler;
 
     public synchronized static MPushApiHelper getInstance() {
         if (apiHelper != null) {
@@ -50,8 +47,9 @@ public class MPushApiHelper {
 
     public MPushApiHelper initSDK(Context context) {
         this.context = context;
+        // 初始化上下文
         Notifications.I.init(context);
-        sp = context.getSharedPreferences("mpush.cfg", Context.MODE_PRIVATE);
+        //注册Notification 图标
         registerIcon(MPushConfig.NOTICE_ICON_SMALL, MPushConfig.NOTICE_ICON_LARGE);
         return getInstance();
     }
@@ -61,26 +59,24 @@ public class MPushApiHelper {
         Notifications.I.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), largeIcon));
     }
 
-    private MPushApiHelper initPush(String allocServer, String userId) {
+    private MPushApiHelper initPush(String allocServer) {
+        MPushLog log = new MPushLog();
+        log.enable(true);
         ClientConfig cc = ClientConfig.build()
                 .setPublicKey(MPushConfig.publicKey)
                 .setAllotServer(allocServer)
                 .setDeviceId(MPushConfig.DeviceId)
                 .setClientVersion(BuildConfig.VERSION_NAME)
-                .setLogger(new MPushLog())
+                .setLogger(log)
                 .setLogEnabled(BuildConfig.DEBUG)
-                .setEnableHttpProxy(true)
-                .setUserId(userId);
+                .setEnableHttpProxy(true);
         MPush.I.checkInit(context).setClientConfig(cc);
         return getInstance();
     }
 
-    public MPushApiHelper bindUser(String userId) {
+    public MPushApiHelper bindUser(String userId, String tags) {
         if (!TextUtils.isEmpty(userId)) {
-            sp.edit().putString("userId", userId);
-            sp.edit().commit();
-            this.userId = userId;
-            MPush.I.bindAccount(userId, "mpush:" + (int) (Math.random() * 10));
+            MPush.I.bindAccount(userId, tags);
         }
         return getInstance();
     }
@@ -91,10 +87,11 @@ public class MPushApiHelper {
      * @param
      */
     public boolean startPush() {
-        allocServer = "http://" + MPushConfig.ALLOC_SERVER;
-        initPush(allocServer, userId);
-        sp.edit().putString("allocServer", allocServer);
-        sp.edit().commit();
+        allocServer = MPushConfig.ALLOC_SERVER;
+        if (!allocServer.startsWith("http://")) {
+            allocServer = "http://" + allocServer;
+        }
+        initPush(allocServer);
         MPush.I.checkInit(context).startPush();
         return true;
     }
@@ -103,15 +100,12 @@ public class MPushApiHelper {
         if (TextUtils.isEmpty(allocServer)) {
             return;
         }
-
         if (!allocServer.startsWith("http://")) {
             allocServer = "http://" + allocServer;
         }
-
         if (TextUtils.isEmpty(msg)) {
             return;
         }
-
         JSONObject params = new JSONObject();
         params.put("userId", toUser);
         params.put("msg", userId + " say:" + msg);
@@ -138,21 +132,5 @@ public class MPushApiHelper {
             }
         });
         MPush.I.sendHttpProxy(request);
-    }
-
-    public void stopPush() {
-        MPush.I.stopPush();
-    }
-
-    public void pausePush() {
-        MPush.I.pausePush();
-    }
-
-    public void resumePush() {
-        MPush.I.resumePush();
-    }
-
-    public void unbindUser() {
-        MPush.I.unbindAccount();
     }
 }

@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
             EditText et = (EditText) findViewById(R.id.alloc);
             et.setText(alloc);
         }
+        startPush(findViewById(R.id.alloc));
     }
 
     private void initPush(String allocServer, String userId) {

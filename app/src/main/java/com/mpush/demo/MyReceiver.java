@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.Printer;
 import android.widget.Toast;
 
 import com.mpush.android.MPush;
@@ -68,6 +70,7 @@ public class MyReceiver extends BroadcastReceiver {
     }
 
     private NotificationDO fromJson(String message) {
+        Log.e("NotificationDO", message);
         try {
             JSONObject messageDO = new JSONObject(message);
             if (messageDO != null) {

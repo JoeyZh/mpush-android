@@ -125,7 +125,7 @@ public final class Notifications {
                 .setDeleteIntent(cancelIntent)
                 .setNumber(number)
                 .setAutoCancel(true)
-                .setOnlyAlertOnce(true)
+                .setOnlyAlertOnce(false)
                         //.setLights(0xff00ff00, 5000, 5000)
                 .setDefaults(defaults)
                 .build();

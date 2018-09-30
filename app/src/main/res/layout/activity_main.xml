@@ -30,7 +30,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="alloc服务接口地址ip:port"
+<<<<<<< HEAD
             android:text="http://192.168.1.112:9999" />
+=======
+            android:text="@string/app_server" />
+>>>>>>> dev
 
     </LinearLayout>
 

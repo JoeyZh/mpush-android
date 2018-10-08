@@ -1,5 +1,16 @@
 package com.mpush.demo;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
+
+import com.mpush.android.BuildConfig;
 import com.mpush.android.R;
 
 /**
@@ -19,13 +30,6 @@ public class MPushConfig {
     // 设备id
     protected static String DeviceId;
 
-    static {
-        String time = Long.toString((System.currentTimeMillis() / (1000 * 60 * 60)));
-        DeviceId = time + time;
-    }
-
-    public static void initConfig(String deviceId) {
-        DeviceId = deviceId;
-    }
+    protected static final String APPLICATION_ID = BuildConfig.APPLICATION_ID;
 
 }

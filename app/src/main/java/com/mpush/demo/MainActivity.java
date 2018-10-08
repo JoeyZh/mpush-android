@@ -1,6 +1,7 @@
 package com.mpush.demo;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -49,14 +50,14 @@ public class MainActivity extends AppCompatActivity {
 //        SharedPreferences sp = this.getSharedPreferences("mpush.cfg", Context.MODE_PRIVATE);
 //        String alloc = sp.getString("allotServer", MPushConfig.ALLOC_SERVER);
 //        if (alloc != null) {
-        MPushConfig.initConfig(getDeviceId());
+        MPushConfig.DeviceId = getDeviceId();
         MPushApiHelper.getInstance().initSDK(this);
         MPushApiHelper.getInstance().startPush();
         EditText et = (EditText) findViewById(R.id.alloc);
         et.setText(MPushConfig.ALLOC_SERVER);
-//        }
     }
 
+    @SuppressLint("MissingPermission")
     private String getDeviceId() {
         TelephonyManager tm = (TelephonyManager) this.getSystemService(Activity.TELEPHONY_SERVICE);
         String deviceId = tm.getDeviceId();
@@ -65,25 +66,6 @@ public class MainActivity extends AppCompatActivity {
             deviceId = time + time;
         }
         return deviceId;
-        /*
-         TelephonyManager tm = (TelephonyManager) this.getSystemService(Activity.TELEPHONY_SERVICE);
-        String deviceId = "";
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return tm.getDeviceId();
-        }
-
-        if (TextUtils.isEmpty(deviceId)) {
-            String time = Long.toString((System.currentTimeMillis() / (1000 * 60 * 60)));
-            deviceId = time + time;
-        }
-        return deviceId;
-         */
     }
 
     public void bindUser(View btn) {

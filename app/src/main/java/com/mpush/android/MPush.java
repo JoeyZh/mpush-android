@@ -50,7 +50,7 @@ public final class MPush {
     private static final String SP_KEY_CV = "clientVersion";
     private static final String SP_KEY_DI = "deviceId";
     private static final String SP_KEY_PK = "publicKey";
-    private static final String SP_KEY_AS = "allotServer";
+    private static final String SP_KEY_AS = "allocServer";
     private static final String SP_KEY_AT = "account";
     private static final String SP_KEY_TG = "tags";
     private static final String SP_KEY_LG = "log";

@@ -17,26 +17,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.mpush.android.BuildConfig;
 import com.mpush.android.MPush;
-import com.mpush.android.MPushLog;
 import com.mpush.android.Notifications;
 import com.mpush.android.R;
 import com.mpush.api.Constants;
 import com.mpush.api.http.HttpCallback;
-import com.mpush.api.http.HttpMethod;
-import com.mpush.api.http.HttpRequest;
 import com.mpush.api.http.HttpResponse;
-import com.mpush.client.ClientConfig;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,29 +30,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Notifications.I.init(this.getApplicationContext());
-        Notifications.I.setSmallIcon(R.mipmap.ic_notification);
-        Notifications.I.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
-//        SharedPreferences sp = this.getSharedPreferences("mpush.cfg", Context.MODE_PRIVATE);
-//        String alloc = sp.getString("allotServer", MPushConfig.ALLOC_SERVER);
-//        if (alloc != null) {
-        MPushConfig.DeviceId = getDeviceId();
-        MPushApiHelper.getInstance().initSDK(this);
-        MPushApiHelper.getInstance().startPush();
+        MPushApiHelper.getInstance().initSDK(this).startPush(MPushConfig.getAllocServer());
         EditText et = (EditText) findViewById(R.id.alloc);
-        et.setText(MPushConfig.ALLOC_SERVER);
+        et.setText(MPushConfig.getAllocServer());
     }
 
-    @SuppressLint("MissingPermission")
-    private String getDeviceId() {
-        TelephonyManager tm = (TelephonyManager) this.getSystemService(Activity.TELEPHONY_SERVICE);
-        String deviceId = tm.getDeviceId();
-        if (TextUtils.isEmpty(deviceId)) {
-            String time = Long.toString((System.currentTimeMillis() / (1000 * 60 * 60)));
-            deviceId = time + time;
-        }
-        return deviceId;
-    }
 
     public void bindUser(View btn) {
         EditText et = (EditText) findViewById(R.id.from);
@@ -79,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public void startPush(View btn) {
         EditText et = (EditText) findViewById(R.id.alloc);
         String allocServer = et.getText().toString().trim();
-        MPushApiHelper.getInstance().startPush();
+        MPushApiHelper.getInstance().startPush(allocServer);
         Toast.makeText(this, "start push", Toast.LENGTH_SHORT).show();
     }
 
@@ -90,7 +58,22 @@ public class MainActivity extends AppCompatActivity {
         EditText helloET = (EditText) findViewById(R.id.httpProxy);
         String hello = helloET.getText().toString().trim();
 
-        MPushApiHelper.getInstance().sendMessageTo(to, hello);
+        MPushApiHelper.getInstance().sendMessageTo(to, hello, new HttpCallback() {
+            @Override
+            public void onResponse(final HttpResponse httpResponse) {
+                String response;
+                if (httpResponse.statusCode == 200) {
+                    response = new String(httpResponse.body, Constants.UTF_8);
+                } else {
+                    response = httpResponse.reasonPhrase;
+                }
+            }
+
+            @Override
+            public void onCancelled() {
+
+            }
+        });
     }
 
     public void stopPush(View btn) {

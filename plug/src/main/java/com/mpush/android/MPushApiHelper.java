@@ -1,17 +1,11 @@
-package com.mpush.demo;
+package com.mpush.android;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.Toast;
 
-import com.mpush.android.BuildConfig;
-import com.mpush.android.MPush;
-import com.mpush.android.MPushLog;
-import com.mpush.android.Notifications;
 import com.mpush.api.Constants;
 import com.mpush.api.http.HttpCallback;
 import com.mpush.api.http.HttpMethod;
@@ -30,9 +24,8 @@ public class MPushApiHelper {
 
     private static MPushApiHelper apiHelper;
 
-    private SharedPreferences sp;
-
     private Context context;
+    private MPushConfig config;
 
     public synchronized static MPushApiHelper getInstance() {
         if (apiHelper != null) {
@@ -45,30 +38,16 @@ public class MPushApiHelper {
         }
     }
 
-    public MPushApiHelper initSDK(Context context) {
+    public MPushApiHelper initSDK(Context context, MPushConfig config) {
         this.context = context;
-        sp = context.getSharedPreferences("mpush.cfg", Context.MODE_PRIVATE);
-        MPushConfig.ALLOC_SERVER = sp.getString("allotServer", MPushConfig.DEFAULT_ALLOC_SERVER);
-        MPushConfig.DEVICE_ID = getDeviceId(context);
-        MPushConfig.USER_ID = sp.getString("account", null);
-
         // 初始化通知内容
+        this.config = config;
         Notifications.I.init(context);
         //注册Notification 图标
-        registerIcon(MPushConfig.NOTICE_ICON_SMALL, MPushConfig.NOTICE_ICON_LARGE);
+        registerIcon(config.getSmallIcon(), config.getLargeIcon());
         return getInstance();
     }
 
-    @SuppressLint("MissingPermission")
-    private String getDeviceId(Context context) {
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Activity.TELEPHONY_SERVICE);
-        String deviceId = tm.getDeviceId();
-        if (TextUtils.isEmpty(deviceId)) {
-            String time = Long.toString((System.currentTimeMillis() / (1000 * 60 * 60)));
-            deviceId = time + time;
-        }
-        return deviceId;
-    }
 
     private void registerIcon(int smallIcon, int largeIcon) {
         Notifications.I.setSmallIcon(smallIcon);
@@ -79,15 +58,15 @@ public class MPushApiHelper {
         MPushLog log = new MPushLog();
         log.enable(true);
         ClientConfig cc = ClientConfig.build()
-                .setPublicKey(MPushConfig.publicKey)
+                .setPublicKey(config.getPrivateKey())
                 .setAllotServer(allotServer)
-                .setDeviceId(MPushConfig.getDeviceId())
+                .setDeviceId(config.getDeviceId())
                 .setClientVersion(BuildConfig.VERSION_NAME)
                 .setLogger(log)
                 .setLogEnabled(BuildConfig.DEBUG)
                 .setEnableHttpProxy(true)
-                .setUserId(MPushConfig.getUserId());
-        MPushConfig.ALLOC_SERVER = allotServer;
+                .setUserId(config.getUserId());
+        config.setAllotServer(allotServer);
         MPush.I.checkInit(context).setClientConfig(cc);
         return getInstance();
     }
@@ -96,7 +75,7 @@ public class MPushApiHelper {
         if (!TextUtils.isEmpty(userId)) {
             MPush.I.bindAccount(userId, tags);
         }
-        MPushConfig.USER_ID = userId;
+        config.setUserId(userId);
         return getInstance();
     }
 
@@ -117,13 +96,29 @@ public class MPushApiHelper {
         }
         JSONObject params = new JSONObject();
         params.put("userId", toUser);
-        params.put("msg", MPushConfig.getUserId() + " say:" + msg);
+        params.put("msg", config.getUserId() + " say:" + msg);
 
-        HttpRequest request = new HttpRequest(HttpMethod.POST, MPushConfig.getAllocServer() + "/push");
+        HttpRequest request = new HttpRequest(HttpMethod.POST, config.getAllotServer() + "/push");
         byte[] body = params.toString().getBytes(Constants.UTF_8);
         request.setBody(body, "application/json; charset=utf-8");
         request.setTimeout((int) TimeUnit.SECONDS.toMillis(10));
         request.setCallback(callback);
         MPush.I.sendHttpProxy(request);
+    }
+
+    public void stopPush() {
+        MPush.I.stopPush();
+    }
+
+    public void pausePush() {
+        MPush.I.pausePush();
+    }
+
+    public void resumePush() {
+        MPush.I.resumePush();
+    }
+
+    public void unbindAccount() {
+        MPush.I.unbindAccount();
     }
 }

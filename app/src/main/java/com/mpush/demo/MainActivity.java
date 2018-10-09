@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.mpush.android.MPush;
+import com.mpush.android.MPushApiHelper;
 import com.mpush.api.Constants;
 import com.mpush.api.http.HttpCallback;
 import com.mpush.api.http.HttpResponse;
@@ -18,9 +19,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MPushApiHelper.getInstance().initSDK(this).startPush(MPushConfig.getAllocServer());
-        EditText et = (EditText) findViewById(R.id.alloc);
-        et.setText(MPushConfig.getAllocServer());
+        MPushApiHelper.getInstance().initSDK(this, MyConfig.build(this))
+                .startPush(MyConfig.allotServer);
+        EditText et = findViewById(R.id.alloc);
+        et.setText(MyConfig.allotServer);
     }
 
 
@@ -80,22 +82,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopPush(View btn) {
-        MPush.I.stopPush();
+        MPushApiHelper.getInstance().stopPush();
         Toast.makeText(this, "stop push", Toast.LENGTH_SHORT).show();
     }
 
     public void pausePush(View btn) {
-        MPush.I.pausePush();
+        MPushApiHelper.getInstance().pausePush();
         Toast.makeText(this, "pause push", Toast.LENGTH_SHORT).show();
     }
 
     public void resumePush(View btn) {
-        MPush.I.resumePush();
+        MPushApiHelper.getInstance().resumePush();
         Toast.makeText(this, "resume push", Toast.LENGTH_SHORT).show();
     }
 
     public void unbindUser(View btn) {
-        MPush.I.unbindAccount();
+        MPushApiHelper.getInstance().unbindAccount();
         Toast.makeText(this, "unbind user", Toast.LENGTH_SHORT).show();
     }
 }

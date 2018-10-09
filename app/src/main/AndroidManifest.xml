@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mpush.android">
+    package="com.mpush.demo">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
@@ -31,7 +31,7 @@
         </activity>
 
         <receiver
-            android:name=".MPushReceiver"
+            android:name="com.mpush.android.MPushReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -42,10 +42,10 @@
         </receiver>
 
         <service
-            android:name=".MPushService"
+            android:name="com.mpush.android.MPushService"
             android:enabled="true"
             android:exported="true" />
-        <service android:name=".MPushFakeService" />
+        <service android:name="com.mpush.android.MPushFakeService" />
 
         <receiver
             android:name="com.mpush.demo.MyReceiver"

@@ -8,7 +8,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.mpush.android.MPush;
-import com.mpush.android.R;
 import com.mpush.api.Constants;
 import com.mpush.api.http.HttpCallback;
 import com.mpush.api.http.HttpResponse;

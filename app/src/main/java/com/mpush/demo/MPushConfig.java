@@ -1,18 +1,7 @@
 package com.mpush.demo;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 
 import com.mpush.android.BuildConfig;
-import com.mpush.android.R;
 
 /**
  * Created by Joey on 2018/9/18.

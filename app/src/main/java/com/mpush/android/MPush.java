@@ -50,7 +50,7 @@ public final class MPush {
     private static final String SP_KEY_CV = "clientVersion";
     private static final String SP_KEY_DI = "deviceId";
     private static final String SP_KEY_PK = "publicKey";
-    private static final String SP_KEY_AS = "allocServer";
+    private static final String SP_KEY_AS = "allotServer";
     private static final String SP_KEY_AT = "account";
     private static final String SP_KEY_TG = "tags";
     private static final String SP_KEY_LG = "log";
@@ -210,7 +210,8 @@ public final class MPush {
             sp.edit().putString(SP_KEY_TG, tags).apply();
             if (hasStarted() && client.isRunning()) {
                 client.bindUser(userId, tags);
-            } else if (clientConfig != null) {
+            }
+            if (clientConfig != null) {
                 clientConfig.setUserId(userId);
             }
         }
@@ -224,9 +225,11 @@ public final class MPush {
             sp.edit().remove(SP_KEY_AT).apply();
             if (hasStarted() && client.isRunning()) {
                 client.unbindUser();
-            } else {
+            }
+            if (clientConfig != null) {
                 clientConfig.setUserId(null);
             }
+
         }
     }
 

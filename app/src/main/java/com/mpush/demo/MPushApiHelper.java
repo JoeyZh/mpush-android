@@ -48,8 +48,9 @@ public class MPushApiHelper {
     public MPushApiHelper initSDK(Context context) {
         this.context = context;
         sp = context.getSharedPreferences("mpush.cfg", Context.MODE_PRIVATE);
-        MPushConfig.ALLOC_SERVER = sp.getString("allocServer", MPushConfig.DEFAULT_ALLOC_SERVER);
-        MPushConfig.DeviceId = getDeviceId(context);
+        MPushConfig.ALLOC_SERVER = sp.getString("allotServer", MPushConfig.DEFAULT_ALLOC_SERVER);
+        MPushConfig.DEVICE_ID = getDeviceId(context);
+        MPushConfig.USER_ID = sp.getString("account", null);
 
         // 初始化通知内容
         Notifications.I.init(context);
@@ -74,17 +75,19 @@ public class MPushApiHelper {
         Notifications.I.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), largeIcon));
     }
 
-    private MPushApiHelper initPush(String allocServer) {
+    private MPushApiHelper initPush(String allotServer) {
         MPushLog log = new MPushLog();
         log.enable(true);
         ClientConfig cc = ClientConfig.build()
                 .setPublicKey(MPushConfig.publicKey)
-                .setAllotServer(allocServer)
-                .setDeviceId(MPushConfig.DeviceId)
+                .setAllotServer(allotServer)
+                .setDeviceId(MPushConfig.getDeviceId())
                 .setClientVersion(BuildConfig.VERSION_NAME)
                 .setLogger(log)
                 .setLogEnabled(BuildConfig.DEBUG)
-                .setEnableHttpProxy(true);
+                .setEnableHttpProxy(true)
+                .setUserId(MPushConfig.getUserId());
+        MPushConfig.ALLOC_SERVER = allotServer;
         MPush.I.checkInit(context).setClientConfig(cc);
         return getInstance();
     }

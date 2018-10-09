@@ -1,5 +1,6 @@
 package com.mpush.demo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -54,20 +55,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void initPush(String allocServer, String userId) {
         //公钥有服务端提供和私钥对应
-        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCghPCWCobG8nTD24juwSVataW7iViRxcTkey/B792VZEhuHjQvA3cAJgx2Lv8GnX8NIoShZtoCg3Cx6ecs+VEPD2fBcg2L4JK7xldGpOJ3ONEAyVsLOttXZtNXvyDZRijiErQALMTorcgi79M5uVX9/jMv2Ggb2XAeZhlLD28fHwIDAQAB";
-
         ClientConfig cc = ClientConfig.build()
-                .setPublicKey(publicKey)
+                .setPublicKey(MPushConfig.publicKey)
                 .setAllotServer(allocServer)
                 .setDeviceId(getDeviceId())
                 .setClientVersion(BuildConfig.VERSION_NAME)
                 .setLogger(new MyLog(this, (EditText) findViewById(R.id.log)))
                 .setLogEnabled(BuildConfig.DEBUG)
-                .setEnableHttpProxy(true)
-                .setUserId(userId);
+                .setEnableHttpProxy(true);
+//                .setUserId(userId);
         MPush.I.checkInit(getApplicationContext()).setClientConfig(cc);
     }
 
+    @SuppressLint("MissingPermission")
     private String getDeviceId() {
         TelephonyManager tm = (TelephonyManager) this.getSystemService(Activity.TELEPHONY_SERVICE);
         String deviceId = tm.getDeviceId();

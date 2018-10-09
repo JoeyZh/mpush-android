@@ -71,7 +71,7 @@ public class MPushApiHelper {
         return getInstance();
     }
 
-    public MPushApiHelper bindUser(String userId, String tags) {
+    public MPushApiHelper bindAccount(String userId, String tags) {
         if (!TextUtils.isEmpty(userId)) {
             MPush.I.bindAccount(userId, tags);
         }

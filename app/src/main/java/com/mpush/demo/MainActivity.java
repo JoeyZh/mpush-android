@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.mpush.android.MPush;
 import com.mpush.android.MPushApiHelper;
 import com.mpush.api.Constants;
 import com.mpush.api.http.HttpCallback;
@@ -27,22 +26,22 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void bindUser(View btn) {
-        EditText et = (EditText) findViewById(R.id.from);
+        EditText et = findViewById(R.id.from);
         String userId = et.getText().toString().trim();
         if (!TextUtils.isEmpty(userId)) {
-            MPush.I.bindAccount(userId, "mpush:" + (int) (Math.random() * 10));
+            MPushApiHelper.getInstance().bindAccount(userId, "mpush:" + (int) (Math.random() * 10));
         }
     }
 
     public void startPush(View btn) {
-        EditText et = (EditText) findViewById(R.id.alloc);
+        EditText et = findViewById(R.id.alloc);
         String allocServer = et.getText().toString().trim();
         MPushApiHelper.getInstance().startPush(allocServer);
         Toast.makeText(this, "start push", Toast.LENGTH_SHORT).show();
     }
 
     public void sendPush(View btn) throws Exception {
-        EditText et1 = (EditText) findViewById(R.id.alloc);
+        EditText et1 = findViewById(R.id.alloc);
         String allocServer = et1.getText().toString().trim();
 
         if (TextUtils.isEmpty(allocServer)) {
@@ -50,17 +49,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (!allocServer.startsWith("http://")) {
-            allocServer = "http://" + allocServer;
-        }
-
-        EditText toET = (EditText) findViewById(R.id.to);
+        EditText toET =  findViewById(R.id.to);
         String to = toET.getText().toString().trim();
 
-        EditText fromET = (EditText) findViewById(R.id.from);
-        String from = fromET.getText().toString().trim();
-
-        EditText helloET = (EditText) findViewById(R.id.httpProxy);
+        EditText helloET = findViewById(R.id.httpProxy);
         String hello = helloET.getText().toString().trim();
 
         MPushApiHelper.getInstance().sendMessageTo(to, hello, new HttpCallback() {

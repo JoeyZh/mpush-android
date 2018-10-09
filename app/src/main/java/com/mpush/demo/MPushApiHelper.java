@@ -1,10 +1,10 @@
 package com.mpush.demo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.support.annotation.MainThread;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
@@ -16,21 +16,21 @@ import com.mpush.api.Constants;
 import com.mpush.api.http.HttpCallback;
 import com.mpush.api.http.HttpMethod;
 import com.mpush.api.http.HttpRequest;
-import com.mpush.api.http.HttpResponse;
 import com.mpush.client.ClientConfig;
 
 import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
+
+/**
+ * 外部开发的API接口
+ */
 
 public class MPushApiHelper {
 
     private static MPushApiHelper apiHelper;
-    // 应用注册Id
-    private String userId;
-    // 分发服务器地址
-    private String allocServer;
+
+    private SharedPreferences sp;
 
     private Context context;
 
@@ -47,11 +47,27 @@ public class MPushApiHelper {
 
     public MPushApiHelper initSDK(Context context) {
         this.context = context;
-        // 初始化上下文
+        sp = context.getSharedPreferences("mpush.cfg", Context.MODE_PRIVATE);
+        MPushConfig.ALLOC_SERVER = sp.getString("allotServer", MPushConfig.DEFAULT_ALLOC_SERVER);
+        MPushConfig.DEVICE_ID = getDeviceId(context);
+        MPushConfig.USER_ID = sp.getString("account", null);
+
+        // 初始化通知内容
         Notifications.I.init(context);
         //注册Notification 图标
         registerIcon(MPushConfig.NOTICE_ICON_SMALL, MPushConfig.NOTICE_ICON_LARGE);
         return getInstance();
+    }
+
+    @SuppressLint("MissingPermission")
+    private String getDeviceId(Context context) {
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Activity.TELEPHONY_SERVICE);
+        String deviceId = tm.getDeviceId();
+        if (TextUtils.isEmpty(deviceId)) {
+            String time = Long.toString((System.currentTimeMillis() / (1000 * 60 * 60)));
+            deviceId = time + time;
+        }
+        return deviceId;
     }
 
     private void registerIcon(int smallIcon, int largeIcon) {
@@ -59,17 +75,19 @@ public class MPushApiHelper {
         Notifications.I.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), largeIcon));
     }
 
-    private MPushApiHelper initPush(String allocServer) {
+    private MPushApiHelper initPush(String allotServer) {
         MPushLog log = new MPushLog();
         log.enable(true);
         ClientConfig cc = ClientConfig.build()
                 .setPublicKey(MPushConfig.publicKey)
-                .setAllotServer(allocServer)
-                .setDeviceId(MPushConfig.DeviceId)
+                .setAllotServer(allotServer)
+                .setDeviceId(MPushConfig.getDeviceId())
                 .setClientVersion(BuildConfig.VERSION_NAME)
                 .setLogger(log)
                 .setLogEnabled(BuildConfig.DEBUG)
-                .setEnableHttpProxy(true);
+                .setEnableHttpProxy(true)
+                .setUserId(MPushConfig.getUserId());
+        MPushConfig.ALLOC_SERVER = allotServer;
         MPush.I.checkInit(context).setClientConfig(cc);
         return getInstance();
     }
@@ -78,6 +96,7 @@ public class MPushApiHelper {
         if (!TextUtils.isEmpty(userId)) {
             MPush.I.bindAccount(userId, tags);
         }
+        MPushConfig.USER_ID = userId;
         return getInstance();
     }
 
@@ -86,51 +105,25 @@ public class MPushApiHelper {
      *
      * @param
      */
-    public boolean startPush() {
-        allocServer = MPushConfig.ALLOC_SERVER;
-        if (!allocServer.startsWith("http://")) {
-            allocServer = "http://" + allocServer;
-        }
+    public MPushApiHelper startPush(String allocServer) {
         initPush(allocServer);
         MPush.I.checkInit(context).startPush();
-        return true;
+        return getInstance();
     }
 
-    public void sendMessageTo(String toUser, String msg) throws Exception {
-        if (TextUtils.isEmpty(allocServer)) {
-            return;
-        }
-        if (!allocServer.startsWith("http://")) {
-            allocServer = "http://" + allocServer;
-        }
+    public void sendMessageTo(String toUser, String msg, HttpCallback callback) throws Exception {
         if (TextUtils.isEmpty(msg)) {
             return;
         }
         JSONObject params = new JSONObject();
         params.put("userId", toUser);
-        params.put("msg", userId + " say:" + msg);
+        params.put("msg", MPushConfig.getUserId() + " say:" + msg);
 
-        final Context context = this.context;
-        HttpRequest request = new HttpRequest(HttpMethod.POST, allocServer + "/push");
+        HttpRequest request = new HttpRequest(HttpMethod.POST, MPushConfig.getAllocServer() + "/push");
         byte[] body = params.toString().getBytes(Constants.UTF_8);
         request.setBody(body, "application/json; charset=utf-8");
         request.setTimeout((int) TimeUnit.SECONDS.toMillis(10));
-        request.setCallback(new HttpCallback() {
-            @Override
-            public void onResponse(final HttpResponse httpResponse) {
-                String response;
-                if (httpResponse.statusCode == 200) {
-                    response = new String(httpResponse.body, Constants.UTF_8);
-                } else {
-                    response = httpResponse.reasonPhrase;
-                }
-            }
-
-            @Override
-            public void onCancelled() {
-
-            }
-        });
+        request.setCallback(callback);
         MPush.I.sendHttpProxy(request);
     }
 }

@@ -32,7 +32,7 @@ import com.mpush.api.Logger;
 public final class MPushLog implements Logger {
     public static final String sTag = "MPUSH";
 
-    private boolean enable = false;
+    private boolean enable = true;
 
     @Override
     public void enable(boolean enabled) {

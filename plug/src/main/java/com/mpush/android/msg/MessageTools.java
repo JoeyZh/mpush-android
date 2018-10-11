@@ -1,4 +1,6 @@
-package com.mpush.demo;
+package com.mpush.android.msg;
+
+import android.content.Intent;
 
 import com.mpush.android.MPushMessage;
 
@@ -9,12 +11,12 @@ import com.mpush.android.MPushMessage;
 
 public interface MessageTools {
 
-    void add(MPushMessage msg);
+    void add();
 
     void read();
 
     void clean();
 
-    void remove(MPushMessage msg);
+    Integer getUnread();
 
 }

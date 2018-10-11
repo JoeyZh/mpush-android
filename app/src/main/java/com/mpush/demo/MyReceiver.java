@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.mpush.android.MPush;
 import com.mpush.android.MPushService;
 import com.mpush.android.Notifications;
+import com.mpush.android.msg.MPushMessageTools;
 import com.mpush.api.Constants;
 
 import org.json.JSONObject;
@@ -23,7 +24,8 @@ public class MyReceiver extends BroadcastReceiver {
             byte[] bytes = intent.getByteArrayExtra(MPushService.EXTRA_PUSH_MESSAGE);
             int messageId = intent.getIntExtra(MPushService.EXTRA_PUSH_MESSAGE_ID, 0);
             String message = new String(bytes, Constants.UTF_8);
-
+            // 收到通知
+            MPushMessageTools.I.add();
             Toast.makeText(context, "收到新的通知：" + message, Toast.LENGTH_SHORT).show();
 
             if (messageId > 0) MPush.I.ack(messageId);
@@ -74,14 +76,18 @@ public class MyReceiver extends BroadcastReceiver {
         try {
             JSONObject messageDO = new JSONObject(message);
             if (messageDO != null) {
-                JSONObject jo = new JSONObject(messageDO.optString("content"));
                 NotificationDO ndo = new NotificationDO();
-                ndo.setContent(jo.optString("content"));
-                ndo.setTitle(jo.optString("title"));
-                ndo.setTicker(jo.optString("ticker"));
-                ndo.setNid(jo.optInt("nid", 1));
-                ndo.setExtras(jo.optJSONObject("extras"));
+                // 处理自定义消息
+                if (messageDO.has("content")) {
+                    JSONObject jo = new JSONObject(messageDO.optString("content"));
+                    ndo.setContent(jo.optString("content"));
+                    ndo.setTitle(jo.optString("title"));
+                    ndo.setTicker(jo.optString("ticker"));
+                    ndo.setNid(jo.optInt("nid", 1));
+                    ndo.setExtras(jo.optJSONObject("extras"));
+                }
                 return ndo;
+
             }
         } catch (Exception e) {
             e.printStackTrace();

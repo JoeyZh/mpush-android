@@ -3,9 +3,8 @@ package com.mpush.android;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.Toast;
 
+import com.mpush.android.msg.MPushMessageTools;
 import com.mpush.api.Constants;
 import com.mpush.api.http.HttpCallback;
 import com.mpush.api.http.HttpMethod;
@@ -17,7 +16,10 @@ import org.json.JSONObject;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 外部开发的API接口
+ * 外部开发的API接口，二次封装的mpush功能的聚合，
+ * 包括消息管理
+ * push管理
+ * 通知管理
  */
 
 public class MPushApiHelper {
@@ -41,10 +43,13 @@ public class MPushApiHelper {
     public MPushApiHelper initSDK(Context context, MPushConfig config) {
         this.context = context;
         // 初始化通知内容
-        this.config = config;
         Notifications.I.init(context);
         //注册Notification 图标
         registerIcon(config.getSmallIcon(), config.getLargeIcon());
+        //初始化配置
+        this.config = config;
+        //初始化消息管理
+        MPushMessageTools.I.init(context);
         return getInstance();
     }
 

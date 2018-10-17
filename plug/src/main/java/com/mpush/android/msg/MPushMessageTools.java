@@ -19,8 +19,7 @@ public class MPushMessageTools implements MessageTools {
     public final static MPushMessageTools I = new MPushMessageTools();
 
     public void init (Context context) {
-        MPushMessageTools tools = new MPushMessageTools();
-        tools.sp = context.getSharedPreferences(SP_FILE_NAME, Context.MODE_PRIVATE);
+        sp = context.getSharedPreferences(SP_FILE_NAME, Context.MODE_PRIVATE);
     }
 
     @Override

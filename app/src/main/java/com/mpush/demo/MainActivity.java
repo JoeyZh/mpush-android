@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mpush.android.MPushApiHelper;
@@ -27,9 +28,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void bindUser(View btn) {
         EditText et = findViewById(R.id.from);
+        EditText tags = findViewById(R.id.tags);
         String userId = et.getText().toString().trim();
         if (!TextUtils.isEmpty(userId)) {
-            MPushApiHelper.getInstance().bindAccount(userId, "mpush:" + (int) (Math.random() * 10));
+            MPushApiHelper.getInstance().bindAccount(userId, tags.toString());
         }
     }
 
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        EditText toET =  findViewById(R.id.to);
+        EditText toET = findViewById(R.id.to);
         String to = toET.getText().toString().trim();
 
         EditText helloET = findViewById(R.id.httpProxy);

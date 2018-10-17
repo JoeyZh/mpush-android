@@ -66,7 +66,7 @@ public class MPushApiHelper {
                 .setPublicKey(config.getPrivateKey())
                 .setAllotServer(allotServer)
                 .setDeviceId(config.getDeviceId())
-                .setClientVersion(BuildConfig.VERSION_NAME)
+                .setClientVersion(config.getClientVersion())
                 .setLogger(log)
                 .setLogEnabled(BuildConfig.DEBUG)
                 .setEnableHttpProxy(true)

@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import com.mpush.android.BuildConfig;
 import com.mpush.android.MPushConfig;
 
 /**
@@ -87,6 +86,10 @@ public class MyConfig implements MPushConfig {
         return deviceId;
     }
 
+    @Override
+    public String getClientVersion() {
+        return com.mpush.demo.BuildConfig.VERSION_NAME;
+    }
 
     @SuppressLint("MissingPermission")
     public static String getDeviceId(Context context) {

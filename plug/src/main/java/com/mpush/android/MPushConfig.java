@@ -14,6 +14,8 @@ public interface MPushConfig {
 
     String getDeviceId();
 
+    String getClientVersion();
+
     void setAllotServer(String allotServer);
 
     void setUserId(String userId);
@@ -25,5 +27,6 @@ public interface MPushConfig {
     Integer getSmallIcon();
 
     Integer getLargeIcon();
+
 
 }

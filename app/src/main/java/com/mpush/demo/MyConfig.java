@@ -18,7 +18,7 @@ import com.mpush.android.MPushConfig;
 public class MyConfig implements MPushConfig {
 
     // 默认推送服务器Ip地址
-    private static final String DEFAULT_ALLOC_SERVER = "http://192.168.1.112:9999";
+    private static final String DEFAULT_ALLOC_SERVER = "http://192.168.1.118:9999";
     // APP的推送smallIcon
     public final int NOTICE_ICON_SMALL = R.mipmap.ic_notification;
     // APP的推送largeIcon

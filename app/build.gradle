@@ -37,8 +37,8 @@ android {
             resValue "string","app_server","http://39.82.36.32:9999"
         }
         debug{
-            buildConfigField "String", "APP_SERVER", "\"http://192.168.1.112:9999\""
-            resValue "string","app_server","http://192.168.1.112:9999"
+            buildConfigField "String", "APP_SERVER", "\"http://192.168.1.118:9999\""
+            resValue "string","app_server","http://192.168.1.118:9999"
         }
     }
 

@@ -17,8 +17,6 @@ import com.mpush.android.MPushConfig;
 
 public class MyConfig implements MPushConfig {
 
-    // 默认推送服务器Ip地址
-    private static final String DEFAULT_ALLOC_SERVER = "http://192.168.1.118:9999";
     // APP的推送smallIcon
     public final int NOTICE_ICON_SMALL = R.mipmap.ic_notification;
     // APP的推送largeIcon
@@ -37,7 +35,7 @@ public class MyConfig implements MPushConfig {
     public static MPushConfig build(Context context) {
         MPushConfig config = new MyConfig();
         SharedPreferences sp = context.getSharedPreferences("mpush.cfg", Context.MODE_PRIVATE);
-        config.setAllotServer(sp.getString("allotServer", DEFAULT_ALLOC_SERVER));
+        config.setAllotServer(sp.getString("allotServer", BuildConfig.APP_SERVER));
         config.setDeviceId(getDeviceId(context));
         config.setUserId(sp.getString("account", null));
         return config;
@@ -49,8 +47,8 @@ public class MyConfig implements MPushConfig {
     }
 
     @Override
-    public void setAllotServer(String allotServer) {
-        this.allotServer = allotServer;
+    public void setAllotServer(String server) {
+        allotServer = server;
     }
 
     @Override
@@ -78,10 +76,12 @@ public class MyConfig implements MPushConfig {
         return NOTICE_ICON_LARGE;
     }
 
+    @Override
     public String getUserId() {
         return userId;
     }
 
+    @Override
     public String getDeviceId() {
         return deviceId;
     }
@@ -93,11 +93,15 @@ public class MyConfig implements MPushConfig {
 
     @SuppressLint("MissingPermission")
     public static String getDeviceId(Context context) {
-        TelephonyManager tm = (TelephonyManager) context.getSystemService(Activity.TELEPHONY_SERVICE);
-        String deviceId = tm.getDeviceId();
-        if (TextUtils.isEmpty(deviceId)) {
-            String time = Long.toString((System.currentTimeMillis() / (1000 * 60 * 60)));
-            deviceId = time + time;
+        String time = Long.toString((System.currentTimeMillis() / (1000 * 60 * 60)));
+        String deviceId = time;
+        try {
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(Activity.TELEPHONY_SERVICE);
+            deviceId = tm.getDeviceId();
+            if (TextUtils.isEmpty(deviceId)) {
+
+            }
+        } catch (Exception e) {
         }
         return deviceId;
     }

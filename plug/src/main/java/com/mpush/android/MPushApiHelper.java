@@ -53,7 +53,6 @@ public class MPushApiHelper {
         return getInstance();
     }
 
-
     private void registerIcon(int smallIcon, int largeIcon) {
         Notifications.I.setSmallIcon(smallIcon);
         Notifications.I.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), largeIcon));

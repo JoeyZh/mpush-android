@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mpush.android.MPushApiHelper;
+import com.mpush.android.MPushConfig;
 import com.mpush.api.Constants;
 import com.mpush.api.http.HttpCallback;
 import com.mpush.api.http.HttpResponse;
@@ -19,10 +20,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MPushApiHelper.getInstance().initSDK(this, MyConfig.build(this))
+        MPushConfig config = MyConfig.build(this);
+        MPushApiHelper.getInstance().initSDK(this, config)
                 .startPush(MyConfig.allotServer);
         EditText et = findViewById(R.id.alloc);
-        et.setText(MyConfig.allotServer);
+        et.setText(config.getAllotServer());
+        EditText from = findViewById(R.id.from);
+        from.setText(config.getUserId());
+
     }
 
 

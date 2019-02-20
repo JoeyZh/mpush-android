@@ -21,10 +21,13 @@ public class MyLog implements Logger {
 
     private MPushLog mPushLog;
 
-    public MyLog(Activity activity, EditText logView) {
+    public MyLog(Activity activity) {
         this.activity = activity;
-        this.logView = logView;
         this.mPushLog = new MPushLog();
+    }
+
+    public void setLogView(EditText logView) {
+        this.logView = logView;
     }
 
     @Override
@@ -60,6 +63,9 @@ public class MyLog implements Logger {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (logView == null) {
+                    return;
+                }
                 logView.getText().append(String.format(s, objects)).append('\n').append('\n');
                 if (throwable != null) {
                     ByteArrayOutputStream buffer = new ByteArrayOutputStream();

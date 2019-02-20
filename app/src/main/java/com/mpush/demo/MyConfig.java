@@ -9,6 +9,8 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
 import com.mpush.android.MPushConfig;
+import com.mpush.android.MPushLog;
+import com.mpush.api.Logger;
 
 /**
  * Created by Joey on 2018/9/18.
@@ -31,6 +33,7 @@ public class MyConfig implements MPushConfig {
     private final String appId = BuildConfig.APPLICATION_ID;
 
     protected static String allotServer;
+    protected Logger logger;
 
     public static MPushConfig build(Context context) {
         MPushConfig config = new MyConfig();
@@ -38,6 +41,7 @@ public class MyConfig implements MPushConfig {
         config.setAllotServer(sp.getString("allotServer", BuildConfig.APP_SERVER));
         config.setDeviceId(getDeviceId(context));
         config.setUserId(sp.getString("account", null));
+        config.setLogger(new MyLog((Activity) context));
         return config;
     }
 
@@ -104,5 +108,15 @@ public class MyConfig implements MPushConfig {
         } catch (Exception e) {
         }
         return deviceId;
+    }
+
+    @Override
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
+    @Override
+    public Logger getLogger() {
+        return logger;
     }
 }

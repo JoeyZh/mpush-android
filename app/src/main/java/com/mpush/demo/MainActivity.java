@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
         et.setText(config.getAllotServer());
         EditText from = findViewById(R.id.from);
         from.setText(config.getUserId());
-
+        EditText log = findViewById(R.id.log);
+        ((MyLog) config.getLogger()).setLogView(log);
     }
 
 

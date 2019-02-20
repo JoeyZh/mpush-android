@@ -59,14 +59,12 @@ public class MPushApiHelper {
     }
 
     private MPushApiHelper initPush(String allotServer) {
-        MPushLog log = new MPushLog();
-        log.enable(true);
         ClientConfig cc = ClientConfig.build()
                 .setPublicKey(config.getPrivateKey())
                 .setAllotServer(allotServer)
                 .setDeviceId(config.getDeviceId())
                 .setClientVersion(config.getClientVersion())
-                .setLogger(log)
+                .setLogger(config.getLogger())
                 .setLogEnabled(BuildConfig.DEBUG)
                 .setEnableHttpProxy(true)
                 .setUserId(config.getUserId());
